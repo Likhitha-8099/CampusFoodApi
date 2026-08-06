@@ -1,8 +1,9 @@
 package com.restfulApis.CampusFoodApp.controller;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.restfulApis.CampusFoodApp.Entity.FoodStall;
 import com.restfulApis.CampusFoodApp.service.FoodStallService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/stalls")
 public class FoodStallController {
@@ -26,8 +29,9 @@ public class FoodStallController {
     }
 
     @PostMapping
-    public void createFoodStall(@RequestBody FoodStall foodStall) {
-        foodStallService.createFoodStall(foodStall);
+    public ResponseEntity<FoodStall> createFoodStall(@Valid @RequestBody FoodStall foodStall) {
+        FoodStall saved=foodStallService.createFoodStall(foodStall);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping
@@ -36,13 +40,14 @@ public class FoodStallController {
     }
 
     @GetMapping("/{id}")
-    public Optional<FoodStall> getFoodById(@PathVariable Long id) {
+    public FoodStall getFoodById(@PathVariable Long id) {
         return foodStallService.getFoodById(id);
     }
 
+
     @PutMapping("/{id}")
     public void updateFoodStall(@PathVariable Long id,
-                                @RequestBody FoodStall foodStall) {
+                                @Valid @RequestBody FoodStall foodStall) {
         foodStallService.updateFoodStall(id, foodStall);
     }
 
