@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.restfulApis.CampusFoodApp.Entity.FoodStall;
+import com.restfulApis.CampusFoodApp.dto.FoodStallRequestDTO;
+import com.restfulApis.CampusFoodApp.dto.FoodStallResponseDTO;
 import com.restfulApis.CampusFoodApp.service.FoodStallService;
 
 import jakarta.validation.Valid;
@@ -27,32 +29,55 @@ public class FoodStallController {
     public FoodStallController(FoodStallService foodStallService) {
         this.foodStallService = foodStallService;
     }
-
     @PostMapping
-    public ResponseEntity<FoodStall> createFoodStall(@Valid @RequestBody FoodStall foodStall) {
-        FoodStall saved=foodStallService.createFoodStall(foodStall);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<FoodStallResponseDTO> createFoodStall(
+            @Valid @RequestBody FoodStallRequestDTO dto) {
+
+        FoodStallResponseDTO saved =
+                foodStallService.createFoodStall(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
     }
 
     @GetMapping
-    public List<FoodStall> getAllFoodStalls() {
-        return foodStallService.getAllFoodStalls();
+    public ResponseEntity<List<FoodStallResponseDTO>> getAllFoodStalls() {
+
+        List<FoodStallResponseDTO> responses =
+                foodStallService.getAllFoodStalls();
+
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public FoodStall getFoodById(@PathVariable Long id) {
-        return foodStallService.getFoodById(id);
+    public ResponseEntity<FoodStallResponseDTO> getFoodById(
+            @PathVariable Long id) {
+
+        FoodStallResponseDTO response =
+                foodStallService.getFoodById(id);
+
+        return ResponseEntity.ok(response);
     }
 
-
     @PutMapping("/{id}")
-    public void updateFoodStall(@PathVariable Long id,
-                                @Valid @RequestBody FoodStall foodStall) {
-        foodStallService.updateFoodStall(id, foodStall);
+    public ResponseEntity<FoodStallResponseDTO> updateFoodStall(
+            @PathVariable Long id,
+            @Valid @RequestBody FoodStallRequestDTO dto) {
+
+        FoodStallResponseDTO updated =
+                foodStallService.updateFoodStall(id, dto);
+
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteFoodStall(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFoodStall(
+            @PathVariable Long id) {
+
         foodStallService.deleteFoodStall(id);
+
+        return ResponseEntity.noContent().build();
     }
+    
 }
