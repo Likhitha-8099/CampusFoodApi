@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.restfulApis.CampusFoodApp.Entity.FoodStall;
@@ -85,5 +87,15 @@ public class FoodStallService {
                 new ResourceNotFoundException("Food stall not found"));
 
         foodStallRepo.delete(foodStall);
+    }
+    public Page<FoodStallResponseDTO> getAllFoodStalls(
+            Pageable pageable) {
+
+        Page<FoodStall> foodStalls =
+                foodStallRepo.findAll(pageable);
+
+        return foodStalls.map(
+                FoodstallMapper::toResponseDTO
+        );
     }
 }

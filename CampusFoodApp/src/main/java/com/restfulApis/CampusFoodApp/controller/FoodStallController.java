@@ -2,6 +2,8 @@ package com.restfulApis.CampusFoodApp.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restfulApis.CampusFoodApp.Entity.FoodStall;
 import com.restfulApis.CampusFoodApp.dto.FoodStallRequestDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallResponseDTO;
 import com.restfulApis.CampusFoodApp.service.FoodStallService;
@@ -78,6 +79,15 @@ public class FoodStallController {
         foodStallService.deleteFoodStall(id);
 
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/paged")
+    public ResponseEntity<Page<FoodStallResponseDTO>> getAllFoodStalls(
+            Pageable pageable) {
+
+        Page<FoodStallResponseDTO> response =
+                foodStallService.getAllFoodStalls(pageable);
+
+        return ResponseEntity.ok(response);
     }
     
 }
