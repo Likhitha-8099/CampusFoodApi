@@ -2,8 +2,10 @@ package com.restfulApis.CampusFoodApp.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.restfulApis.CampusFoodApp.Entity.FoodItem;
@@ -79,5 +81,65 @@ public class FoodItemService {
 		
 	}
 	
+	public List<FoodItemResponseDTO> getFoodItemsByStallId(Long stallId){
+		List<FoodItem> foodItem=foodItemRepo.findByFoodStallId(stallId);
+		List<FoodItemResponseDTO> response=foodItemMapper.list(foodItem);
+		return response;
+		
+	}
+	
+	public List<FoodItemResponseDTO> getFoodItemByStallName(String name){
+		List<FoodItem> foodItem=foodItemRepo.findByNameContainingIgnoreCase(name);
+		List<FoodItemResponseDTO> response=foodItemMapper.list(foodItem);
+		return response;
+	}
+	
+	public List<FoodItemResponseDTO> getbyMaxPrice(double maxPrice){
+		List<FoodItem> foodItem=foodItemRepo.findByPriceLessThan(maxPrice);
+		List<FoodItemResponseDTO> response=foodItemMapper.list(foodItem);
+		return response;
+		
+	}
+	public List<FoodItemResponseDTO> filterFoodItems(String category,double maxPrice){
+		List<FoodItem> foodItem=foodItemRepo.findByCategoryAndPrice(category, maxPrice);
+		List<FoodItemResponseDTO> dto= foodItemMapper.list(foodItem);
+		return dto;
+	}
+	
+	public List<FoodItemResponseDTO> categoryAndAvailble(String category,boolean availble){
+		List<FoodItem> foodItem=foodItemRepo.findByCategoryAndAvailable(category, availble);
+		List<FoodItemResponseDTO> dto=foodItemMapper.list(foodItem);
+		return dto;
+	}
+	public Page<FoodItemResponseDTO> getAllFoodItems(int page,int size){
+		Pageable pageable =PageRequest.of(page, size);
+	Page<FoodItem> foodItems=foodItemRepo.findAll(pageable);
+	    return foodItems.map(item -> foodItemMapper.toResponseDTO(item));
+
+	}
+
+	public String getFoodItemAsHtml(Long id) {
+		FoodItem item = foodItemRepo.findById(id)
+		        .orElseThrow(() ->
+		            new ResourceNotFoundException("Food item not found"));
+		String html = """
+		        <html>
+		        <body>
+		            <h1>%s</h1>
+		            <p>Price: ₹%.2f</p>
+		            <p>Category: %s</p>
+		            <p>Available: %s</p>
+		        </body>
+		        </html>
+		        """.formatted(
+		            item.getName(),
+		            item.getPrice(),
+		            item.getCategory(),
+		            item.isAvailable()
+		        );
+
+		return html;
+	
+	}
 
 }

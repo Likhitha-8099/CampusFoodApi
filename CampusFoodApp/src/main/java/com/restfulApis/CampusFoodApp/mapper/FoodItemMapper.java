@@ -1,5 +1,8 @@
 package com.restfulApis.CampusFoodApp.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.restfulApis.CampusFoodApp.Entity.FoodItem;
@@ -38,4 +41,14 @@ public class FoodItemMapper {
 	    foodItem.setCategory(dto.getCategory());
 	    foodItem.setAvailable(dto.isAvailable());
 	}
+	public List<FoodItemResponseDTO> list(List<FoodItem> foodItem){
+		List<FoodItemResponseDTO> dtoli=new ArrayList<>();
+		for(FoodItem item:foodItem) {
+			dtoli.add(toResponseDTO(item));
+		}
+		return dtoli;
+		
+	}
+
+	
 }

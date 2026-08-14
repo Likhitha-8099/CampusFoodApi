@@ -1,8 +1,10 @@
 package com.restfulApis.CampusFoodApp.controller;
 
 
+import java.awt.PageAttributes.MediaType;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.restfulApis.CampusFoodApp.Entity.FoodItem;
@@ -57,6 +60,52 @@ public class FoodItemController {
 	@DeleteMapping("/{id}")
 	public void deleteFoodItemById(@PathVariable Long id){
 		foodItemService.deleteFoodItemById(id);
+	}
+	
+	@GetMapping("/{id}/food-items")
+	public ResponseEntity<List<FoodItemResponseDTO>> foodItemByFoodStallId(@PathVariable Long id){
+		List<FoodItemResponseDTO> li=foodItemService.getFoodItemsByStallId(id);
+		return ResponseEntity.ok(li);
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<List<FoodItemResponseDTO>> findItemByFoodStallName(@RequestParam String name){
+		List<FoodItemResponseDTO> li=foodItemService.getFoodItemByStallName(name);
+		return ResponseEntity.ok(li);
+	}
+	
+	@GetMapping("/filter")
+	public ResponseEntity<List<FoodItemResponseDTO>> findItemsLessThanMaxPrice(@RequestParam double maxPrice){
+		List<FoodItemResponseDTO> li=foodItemService.getbyMaxPrice(maxPrice);
+		return ResponseEntity.ok(li);
+	}
+	
+	@GetMapping("/filter/category")
+	public ResponseEntity<List<FoodItemResponseDTO>> filterItem(@RequestParam String category, @RequestParam double maxPrice){
+		List<FoodItemResponseDTO> li=foodItemService.filterFoodItems(category, maxPrice);
+		return ResponseEntity.ok(li);
+	}
+	@GetMapping("/filter/categoryAndAvailavility")
+	public ResponseEntity<List<FoodItemResponseDTO>> findByCategoryAndAvailable(@RequestParam String category,@RequestParam boolean available){
+		List<FoodItemResponseDTO> li=foodItemService.categoryAndAvailble(category, available);
+		return ResponseEntity.ok(li);
+		
+	}
+	@GetMapping("/paged")
+	public ResponseEntity<Page<FoodItemResponseDTO>> getAllFoodItemsPaged(
+	        @RequestParam int page,
+	        @RequestParam int size) {
+
+	    Page<FoodItemResponseDTO> response =
+	            foodItemService.getAllFoodItems(page, size);
+
+	    return ResponseEntity.ok(response);
+	}
+	@GetMapping(value="/{id}/html" , produces="text/html")
+	public ResponseEntity<String> getFoodItemAsHTML(@PathVariable Long id){
+		 String html = foodItemService.getFoodItemAsHtml(id);
+
+		    return ResponseEntity.ok(html);
 	}
 
 }
