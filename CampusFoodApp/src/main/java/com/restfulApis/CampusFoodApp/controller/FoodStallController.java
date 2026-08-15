@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.restfulApis.CampusFoodApp.dto.FoodItemResponseDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallRequestDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallResponseDTO;
 import com.restfulApis.CampusFoodApp.service.FoodStallService;
@@ -79,6 +80,19 @@ public class FoodStallController {
         foodStallService.deleteFoodStall(id);
 
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{stallId}/food-items")
+    public ResponseEntity<List<FoodItemResponseDTO>> getFoodItemsByStall(
+            @PathVariable Long stallId) {
+
+        System.out.println("🔥🔥 CONTROLLER REACHED 🔥🔥");
+
+        List<FoodItemResponseDTO> items =
+                foodStallService.getFoodItemsByStall(stallId);
+
+        System.out.println("🔥 ITEMS COUNT = " + items.size());
+
+        return ResponseEntity.ok(items);
     }
     @GetMapping("/paged")
     public ResponseEntity<Page<FoodStallResponseDTO>> getAllFoodStalls(

@@ -31,7 +31,10 @@ public class FoodItemMapper {
 	    dto.setPrice(foodItem.getPrice());
 	    dto.setCategory(foodItem.getCategory());
 	    dto.setAvailable(foodItem.isAvailable());
-	    dto.setFoodStallId(foodItem.getFoodStall().getId());
+
+	    if (foodItem.getFoodStall() != null) {
+	        dto.setFoodStallId(foodItem.getFoodStall().getId());
+	    }
 
 	    return dto;
 	}

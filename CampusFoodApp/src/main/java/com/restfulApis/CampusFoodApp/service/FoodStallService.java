@@ -8,10 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.restfulApis.CampusFoodApp.Entity.FoodItem;
 import com.restfulApis.CampusFoodApp.Entity.FoodStall;
+import com.restfulApis.CampusFoodApp.dto.FoodItemResponseDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallRequestDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallResponseDTO;
 import com.restfulApis.CampusFoodApp.exception.ResourceNotFoundException;
+import com.restfulApis.CampusFoodApp.mapper.FoodItemMapper;
 import com.restfulApis.CampusFoodApp.mapper.FoodstallMapper;
 import com.restfulApis.CampusFoodApp.repository.FoodStallRepository;
 
@@ -21,73 +24,134 @@ public class FoodStallService {
     @Autowired
     private FoodStallRepository foodStallRepo;
 
-    public FoodStallResponseDTO createFoodStall(FoodStallRequestDTO foodStallDTO) {
+    @Autowired
+    private FoodItemMapper foodItemMapper;
 
-        FoodStall foodStall = FoodstallMapper.toEntity(foodStallDTO);
-        FoodStall saved = foodStallRepo.save(foodStall);
+    // =========================
+    // CREATE
+    // =========================
+
+    public FoodStallResponseDTO createFoodStall(
+            FoodStallRequestDTO foodStallDTO) {
+
+        FoodStall foodStall =
+                FoodstallMapper.toEntity(foodStallDTO);
+
+        FoodStall saved =
+                foodStallRepo.save(foodStall);
+
         return FoodstallMapper.toResponseDTO(saved);
-
-//        foodStall.setName(foodStallDTO.getName());
-//        foodStall.setOwnerName(foodStallDTO.getOwnerName());
-//        foodStall.setLocation(foodStallDTO.getLocation());
-//        foodStall.setPhoneNumber(foodStallDTO.getPhoneNumber());
-//        foodStall.setRating(foodStallDTO.getRating());
-//        
-//        FoodStall saved = foodStallRepo.save(foodStall);
-//
-//        FoodStallResponseDTO response = new FoodStallResponseDTO();
-//
-//        response.setId(saved.getId());
-//        response.setName(saved.getName());
-//        response.setOwnerName(saved.getOwnerName());
-//        response.setLocation(saved.getLocation());
-//        response.setRating(saved.getRating());
-
-//        return response;
     }
 
+    // =========================
+    // GET ALL
+    // =========================
+
     public List<FoodStallResponseDTO> getAllFoodStalls() {
-    	List<FoodStall> foodStalls=foodStallRepo.findAll();
-    	
-    	List<FoodStallResponseDTO> responses=new ArrayList<>();
-		for (FoodStall foodStall : foodStalls) {
 
-			FoodStallResponseDTO response = FoodstallMapper.toResponseDTO(foodStall);
+        List<FoodStall> foodStalls =
+                foodStallRepo.findAll();
 
-			responses.add(response);
-		}
+        List<FoodStallResponseDTO> responses =
+                new ArrayList<>();
+
+        for (FoodStall foodStall : foodStalls) {
+
+            FoodStallResponseDTO response =
+                    FoodstallMapper.toResponseDTO(foodStall);
+
+            responses.add(response);
+        }
+
         return responses;
     }
 
+    // =========================
+    // GET BY ID
+    // =========================
+
     public FoodStallResponseDTO getFoodById(Long id) {
-    	FoodStall foodStall=foodStallRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Food stall not found"));
-    	FoodStallResponseDTO response=FoodstallMapper.toResponseDTO(foodStall);
-        
-        return response;
-        
+
+        FoodStall foodStall =
+                foodStallRepo.findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                        "Food stall not found"
+                    )
+                );
+
+        return FoodstallMapper.toResponseDTO(foodStall);
     }
+
+    // =========================
+    // GET FOOD ITEMS BY STALL
+    // =========================
+
+    public List<FoodItemResponseDTO> getFoodItemsByStall(
+            Long stallId) {
+
+        FoodStall stall =
+                foodStallRepo.findById(stallId)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                        "Food stall not found"
+                    )
+                );
+
+        List<FoodItem> foodItems =
+                stall.getFoodItems();
+
+        return foodItemMapper.list(foodItems);
+    }
+
+    // =========================
+    // UPDATE
+    // =========================
+
     public FoodStallResponseDTO updateFoodStall(
             Long id,
             FoodStallRequestDTO dto) {
 
-        FoodStall existing = foodStallRepo.findById(id)
+        FoodStall existing =
+                foodStallRepo.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Food stall not found"));
+                    new ResourceNotFoundException(
+                        "Food stall not found"
+                    )
+                );
 
-        FoodstallMapper.updateEntity(existing, dto);
+        FoodstallMapper.updateEntity(
+                existing,
+                dto
+        );
 
-        FoodStall saved = foodStallRepo.save(existing);
+        FoodStall saved =
+                foodStallRepo.save(existing);
 
         return FoodstallMapper.toResponseDTO(saved);
     }
+
+    // =========================
+    // DELETE
+    // =========================
+
     public void deleteFoodStall(Long id) {
 
-        FoodStall foodStall = foodStallRepo.findById(id)
+        FoodStall foodStall =
+                foodStallRepo.findById(id)
                 .orElseThrow(() ->
-                new ResourceNotFoundException("Food stall not found"));
+                    new ResourceNotFoundException(
+                        "Food stall not found"
+                    )
+                );
 
         foodStallRepo.delete(foodStall);
     }
+
+    // =========================
+    // PAGINATION
+    // =========================
+
     public Page<FoodStallResponseDTO> getAllFoodStalls(
             Pageable pageable) {
 

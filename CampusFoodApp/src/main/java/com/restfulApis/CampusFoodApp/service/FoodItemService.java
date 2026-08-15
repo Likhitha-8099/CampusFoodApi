@@ -23,6 +23,7 @@ import com.restfulApis.CampusFoodApp.mapper.FoodItemMapper;
 import com.restfulApis.CampusFoodApp.repository.FoodItemRepository;
 import com.restfulApis.CampusFoodApp.repository.FoodStallRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.Data;
 
 @Service
@@ -37,7 +38,7 @@ public class FoodItemService {
 		this.foodStallRepo=foodStallRepo;
 		this.foodItemMapper = foodItemMapper;
 	}
-	
+	@Transactional
 	public FoodItemResponseDTO createFoodItem(FoodItemRequestDTO dto) {
 		FoodItem foodItem=foodItemMapper.toEntity(dto);
 		FoodStall foodStall=foodStallRepo.findById(dto.getFoodStallId()).orElseThrow(()->
@@ -117,6 +118,7 @@ public class FoodItemService {
 		List<FoodItemResponseDTO> dto=foodItemMapper.list(foodItem);
 		return dto;
 	}
+	
 	public Page<FoodItemResponseDTO> getAllFoodItems(int page,int size,String sortBy,String direction){
 		Sort sort;
 
@@ -173,5 +175,5 @@ public class FoodItemService {
 	    document.close();
 	    return outputStream.toByteArray();
 	}
-
+ 
 }

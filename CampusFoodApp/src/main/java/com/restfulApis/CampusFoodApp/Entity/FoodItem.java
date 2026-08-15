@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -26,6 +27,8 @@ public class FoodItem {
 
     @ManyToOne
     @JoinColumn(name = "food_stall_id")
+    @ToString.Exclude
+
     private FoodStall foodStall;
     
    	

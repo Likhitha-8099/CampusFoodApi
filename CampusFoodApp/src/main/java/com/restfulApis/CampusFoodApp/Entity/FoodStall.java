@@ -2,6 +2,7 @@ package com.restfulApis.CampusFoodApp.Entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +17,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -47,7 +49,10 @@ public class FoodStall {
     private double rating;
     private boolean isOpen;
     
-    @OneToMany(mappedBy="foodStall")
+    @OneToMany(mappedBy="foodStall",cascade = CascadeType.ALL,
+    	    orphanRemoval = true)
+    @ToString.Exclude
+
     private List<FoodItem> foodItems;
 
 }
