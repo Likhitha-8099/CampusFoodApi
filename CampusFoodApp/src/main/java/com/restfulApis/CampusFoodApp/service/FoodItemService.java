@@ -1,13 +1,19 @@
 package com.restfulApis.CampusFoodApp.service;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import com.restfulApis.CampusFoodApp.Entity.FoodItem;
 import com.restfulApis.CampusFoodApp.Entity.FoodStall;
 import com.restfulApis.CampusFoodApp.dto.FoodItemRequestDTO;
@@ -111,9 +117,16 @@ public class FoodItemService {
 		List<FoodItemResponseDTO> dto=foodItemMapper.list(foodItem);
 		return dto;
 	}
-	public Page<FoodItemResponseDTO> getAllFoodItems(int page,int size){
+	public Page<FoodItemResponseDTO> getAllFoodItems(int page,int size,String sortBy,String direction){
+		Sort sort;
+
+	    if (direction.equalsIgnoreCase("desc")) {
+	        sort = Sort.by(sortBy).descending();
+	    } else {
+	        sort = Sort.by(sortBy).ascending();
+	    }
 		Pageable pageable =PageRequest.of(page, size);
-	Page<FoodItem> foodItems=foodItemRepo.findAll(pageable);
+	    Page<FoodItem> foodItems=foodItemRepo.findAll(pageable);
 	    return foodItems.map(item -> foodItemMapper.toResponseDTO(item));
 
 	}
@@ -140,6 +153,25 @@ public class FoodItemService {
 
 		return html;
 	
+	}
+	public byte[] generateFoodItemPdf(Long id) {
+
+	    FoodItem item = foodItemRepo.findById(id)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException("Food item not found"));
+
+	    ByteArrayOutputStream outputStream =
+	            new ByteArrayOutputStream();
+	    PdfWriter writer = new PdfWriter(outputStream);
+	    PdfDocument pdfDocument = new PdfDocument(writer);
+	    Document document = new Document(pdfDocument);
+	    document.add(new Paragraph("Food Item Details"));
+	    document.add(new Paragraph("Name: " + item.getName()));
+	    document.add(new Paragraph("Price: " + item.getPrice()));
+	    document.add(new Paragraph("Category: " + item.getCategory()));
+	    document.add(new Paragraph("Available: " + item.isAvailable()));
+	    document.close();
+	    return outputStream.toByteArray();
 	}
 
 }

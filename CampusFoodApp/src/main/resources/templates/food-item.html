@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Food Item</title>
+</head>
+<body>
+
+    <h1 th:text="${foodItem.name}">Food Name</h1>
+
+    <p>Price: <span th:text="${foodItem.price}"></span></p>
+
+    <p>Category: <span th:text="${foodItem.category}"></span></p>
+
+    <p>Available: <span th:text="${foodItem.available}"></span></p>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.restfulApis.CampusFoodApp.controller;
 
 
-import java.awt.PageAttributes.MediaType;
+import org.springframework.http.MediaType;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -91,13 +91,20 @@ public class FoodItemController {
 		return ResponseEntity.ok(li);
 		
 	}
-	@GetMapping("/paged")
-	public ResponseEntity<Page<FoodItemResponseDTO>> getAllFoodItemsPaged(
-	        @RequestParam int page,
-	        @RequestParam int size) {
+	@GetMapping("/page")
+	public ResponseEntity<Page<FoodItemResponseDTO>> getFoodItems(
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "price") String sortBy,
+	        @RequestParam(defaultValue = "asc") String direction) {
 
 	    Page<FoodItemResponseDTO> response =
-	            foodItemService.getAllFoodItems(page, size);
+	            foodItemService.getAllFoodItems(
+	                    page,
+	                    size,
+	                    sortBy,
+	                    direction
+	            );
 
 	    return ResponseEntity.ok(response);
 	}
@@ -107,5 +114,13 @@ public class FoodItemController {
 
 		    return ResponseEntity.ok(html);
 	}
+	@GetMapping("/{id}/pdf")
+	public ResponseEntity<byte[]> getFoodItemPdf(@PathVariable Long id) {
 
+	    byte[] pdf = foodItemService.generateFoodItemPdf(id);
+
+	    return ResponseEntity.ok()
+	            .contentType(MediaType.APPLICATION_PDF)
+	            .body(pdf);
+	}
 }
