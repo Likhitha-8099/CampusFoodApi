@@ -1,29 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">>
 
 <head>
 	<title>Food Stall</title>
 </head>
 
 <body>
-
-	<h1 th:text="${stall.name}">Stall name</h1>
+	<h1 th:text:"${stall.name}">Stall name</h1>
 
 	<p>
 		Owner:
 		<span th:text="${stall.ownerName}"></span>
 	</p>
-
 	<p>
 		Location:
 		<span th:text="${stall.location}"></span>
 	</p>
-
 	<p>
 		Rating:
 		<span th:text="${stall.rating}"></span>
 	</p>
-
+	
 </body>
 
 </html>

@@ -114,6 +114,7 @@ public class FoodItemController {
 
 		    return ResponseEntity.ok(html);
 	}
+	
 	@GetMapping("/{id}/pdf")
 	public ResponseEntity<byte[]> getFoodItemPdf(@PathVariable Long id) {
 

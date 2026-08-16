@@ -1,10 +1,13 @@
 package com.restfulApis.CampusFoodApp.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.restfulApis.CampusFoodApp.Entity.FoodStall;
 import com.restfulApis.CampusFoodApp.dto.FoodItemResponseDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallRequestDTO;
 import com.restfulApis.CampusFoodApp.dto.FoodStallResponseDTO;
@@ -102,6 +110,27 @@ public class FoodStallController {
                 foodStallService.getAllFoodStalls(pageable);
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> getStallAsPdf(@PathVariable Long id){
+    	FoodStall stall=foodStallService.getFoodStall(id);
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	PdfWriter writer = new PdfWriter(out);
+    	PdfDocument pdfdocument = new PdfDocument(writer);
+    	Document document = new Document(pdfdocument);
+    	document.add(new Paragraph("Food Stall Details"));
+    	document.add(new Paragraph("Food Stall Details"));
+
+    	document.add(new Paragraph("Name: " + stall.getName()));
+    	document.add(new Paragraph("Owner: " + stall.getOwnerName()));
+    	document.add(new Paragraph("Location: " + stall.getLocation()));
+    	document.add(new Paragraph("Rating: " + stall.getRating()));
+    	document.close();
+    	byte[] pdfBytes = out.toByteArray();
+    	return ResponseEntity
+    	        .ok()
+    	        .contentType(MediaType.APPLICATION_PDF)
+    	        .body(pdfBytes);
     }
     
 }

@@ -162,4 +162,17 @@ public class FoodStallService {
                 FoodstallMapper::toResponseDTO
         );
     }
+//    public String getFoodStallAsHtml(Long id) {
+//    	FoodStall stall=foodStallRepo.findById(id).orElseThrow(
+//    			()->new ResourceNotFoundException("Food stall not found"));
+//    	
+//    	
+//    }
+
+	public FoodStall getFoodStall(Long id) {
+		FoodStall stall = foodStallRepo.findById(id)
+		        .orElseThrow(() ->
+		                new ResourceNotFoundException("Food stall not found"));
+		return stall;
+	}
 }
